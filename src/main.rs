@@ -7,7 +7,6 @@ use std::cmp::PartialEq;
 use serde::{Serialize, Deserialize};
 use std::error::Error;
 use crate::breeding::Breeding;
-use crate::pokemon::{Gender, Pokemon, PokemonType};
 use crate::utils::show_pokemons_list;
 
 fn main() {
