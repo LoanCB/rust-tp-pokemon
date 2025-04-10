@@ -6,7 +6,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize, Ord, PartialOrd, Eq)]
 enum PokemonType {
     Feu,
     Eau,
@@ -93,6 +93,23 @@ impl Pokemon {
     }
 }
 
+fn show_pokemons_list(pokemons: &Vec<Pokemon>) {
+    let mut table = Table::new();
+    table.add_row(row!["Nom", "Niveau", "Type", "Expérience", "Genre"]);
+
+    for pokemon in pokemons {
+        table.add_row(row![
+            pokemon.name,
+            pokemon.level,
+            format!("{:?}", pokemon.pokemon_type),
+            pokemon.experience,
+            format!("{:?}", pokemon.gender),
+        ]);
+    }
+
+    table.printstd();
+}
+
 #[derive(Serialize, Deserialize)]
 struct Breeding {
     pokemons: Vec<Pokemon>,
@@ -111,20 +128,7 @@ impl Breeding {
     }
 
     fn show_all(&self) {
-        let mut table = Table::new();
-        table.add_row(row!["Nom", "Niveau", "Type", "Expérience", "Genre"]);
-
-        for pokemon in &self.pokemons {
-            table.add_row(row![
-                pokemon.name,
-                pokemon.level,
-                format!("{:?}", pokemon.pokemon_type),
-                pokemon.experience,
-                format!("{:?}", pokemon.gender),
-            ]);
-        }
-
-        table.printstd();
+        show_pokemons_list(&self.pokemons);
     }
 
     fn train_pokemons(&mut self, gain: u32) {
@@ -157,6 +161,12 @@ impl Breeding {
         let breeding: Breeding = serde_json::from_reader(reader)?;
         println!("Chargement effectué avec succès");
         Ok(breeding)
+    }
+
+    fn list_by_type(&self) -> Vec<Pokemon> {
+        let mut sorted = self.pokemons.clone();
+        sorted.sort_by(|a, b| a.pokemon_type.cmp(&b.pokemon_type));
+        sorted
     }
 }
 
@@ -195,4 +205,7 @@ fn main() {
     //     }
     //     Err(e) => eprintln!("Erreur au chargement : {}", e),
     // }
+
+    println!("Liste des Pokémons triés par type");
+    show_pokemons_list(&breeding.list_by_type());
 }
