@@ -2,7 +2,7 @@
   "pokemons": [
     {
       "name": "Pikachu",
-      "level": 12,
+      "level": 14,
       "pokemon_type": "Electrik",
       "experience": 25,
       "gender": "Male"
@@ -23,14 +23,14 @@
     },
     {
       "name": "Feunard",
-      "level": 12,
+      "level": 23,
       "pokemon_type": "Feu",
       "experience": 25,
       "gender": "Male"
     },
     {
       "name": "Galifeu",
-      "level": 12,
+      "level": 3,
       "pokemon_type": "Feu",
       "experience": 25,
       "gender": "Femelle"
