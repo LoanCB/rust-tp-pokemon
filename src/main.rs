@@ -1,8 +1,12 @@
 use prettytable::{Table, row};
 use rand::Rng;
 use std::cmp::PartialEq;
+use serde::{Serialize, Deserialize};
+use std::error::Error;
+use std::fs::File;
+use std::io::BufReader;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 enum PokemonType {
     Feu,
     Eau,
@@ -20,13 +24,13 @@ enum PokemonType {
     Glace,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 enum Gender {
     Male,
     Femelle,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 struct Pokemon {
     name: String,
     level: u8,
@@ -89,6 +93,7 @@ impl Pokemon {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 struct Breeding {
     pokemons: Vec<Pokemon>,
 }
@@ -138,6 +143,21 @@ impl Breeding {
             None => {}
         }
     }
+
+    fn save_to_file(&self) -> Result<(), Box<dyn Error>> {
+        let file = File::create("pokemons.json")?;
+        serde_json::to_writer_pretty(file, &self)?;
+        println!("Sauvegarde effectuée avec succès");
+        Ok(())
+    }
+
+    fn load_from_file() -> Result<Breeding, Box<dyn Error>> {
+        let file = File::open("pokemons.json")?;
+        let reader = BufReader::new(file);
+        let breeding: Breeding = serde_json::from_reader(reader)?;
+        println!("Chargement effectué avec succès");
+        Ok(breeding)
+    }
 }
 
 fn main() {
@@ -163,4 +183,16 @@ fn main() {
     let galifeu_ref = breeding.pokemons[4].clone();
     breeding.try_reproduce(&feunard_ref, &galifeu_ref);
     breeding.show_all();
+
+    // save to file
+    let _ = breeding.save_to_file();
+
+    // Load from file
+    // match Breeding::load_from_file() {
+    //     Ok(reloaded) => {
+    //         println!("Elevage rechargé !");
+    //         reloaded.show_all();
+    //     }
+    //     Err(e) => eprintln!("Erreur au chargement : {}", e),
+    // }
 }

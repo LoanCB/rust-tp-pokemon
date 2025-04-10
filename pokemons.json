@@ -1,0 +1,46 @@
+{
+  "pokemons": [
+    {
+      "name": "Pikachu",
+      "level": 12,
+      "pokemon_type": "Electrik",
+      "experience": 25,
+      "gender": "Male"
+    },
+    {
+      "name": "Salamèche",
+      "level": 12,
+      "pokemon_type": "Feu",
+      "experience": 25,
+      "gender": "Femelle"
+    },
+    {
+      "name": "Bulbizarre",
+      "level": 12,
+      "pokemon_type": "Plante",
+      "experience": 25,
+      "gender": "Male"
+    },
+    {
+      "name": "Feunard",
+      "level": 12,
+      "pokemon_type": "Feu",
+      "experience": 25,
+      "gender": "Male"
+    },
+    {
+      "name": "Galifeu",
+      "level": 12,
+      "pokemon_type": "Feu",
+      "experience": 25,
+      "gender": "Femelle"
+    },
+    {
+      "name": "Mystere",
+      "level": 1,
+      "pokemon_type": "Feu",
+      "experience": 0,
+      "gender": "Male"
+    }
+  ]
+}
