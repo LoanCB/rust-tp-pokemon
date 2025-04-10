@@ -1,3 +1,4 @@
+use prettytable::{Table, row};
 use rand::Rng;
 use std::cmp::PartialEq;
 
@@ -69,7 +70,7 @@ impl Pokemon {
             && other.level >= 10
     }
 
-    fn reproduce(first_pokemon: &Pokemon, second_pokemon: &Pokemon) {
+    fn reproduce(first_pokemon: &Pokemon, second_pokemon: &Pokemon) -> Option<Pokemon> {
         if first_pokemon.can_reproduce(&second_pokemon) {
             let mut rng = rand::rng();
             let gender = if rng.random_bool(0.5) {
@@ -77,16 +78,89 @@ impl Pokemon {
             } else {
                 Gender::Femelle
             };
-            Pokemon::new("Mystere", first_pokemon.clone().pokemon_type, gender);
+            Some(Pokemon::new("Mystere", first_pokemon.clone().pokemon_type, gender))
         } else {
             println!(
                 "{} et {} ne peuvent pas se reproduire !",
                 first_pokemon.name, second_pokemon.name
             );
+            None
+        }
+    }
+}
+
+struct Breeding {
+    pokemons: Vec<Pokemon>,
+}
+
+impl Breeding {
+    fn new() -> Self {
+        Breeding {
+            pokemons: Vec::new(),
+        }
+    }
+
+    fn add_pokemon(&mut self, pokemon: Pokemon) {
+        println!("Ajout de {} à l'élevage", pokemon.name);
+        self.pokemons.push(pokemon);
+    }
+
+    fn show_all(&self) {
+        let mut table = Table::new();
+        table.add_row(row!["Nom", "Niveau", "Type", "Expérience", "Genre"]);
+
+        for pokemon in &self.pokemons {
+            table.add_row(row![
+                pokemon.name,
+                pokemon.level,
+                format!("{:?}", pokemon.pokemon_type),
+                pokemon.experience,
+                format!("{:?}", pokemon.gender),
+            ]);
+        }
+
+        table.printstd();
+    }
+
+    fn train_pokemons(&mut self, gain: u32) {
+        for pokemon in self.pokemons.iter_mut() {
+            pokemon.win_xp(gain);
+        }
+    }
+
+    fn try_reproduce(&mut self, first_pokemon: &Pokemon, second_pokemon: &Pokemon) {
+        match Pokemon::reproduce(first_pokemon, second_pokemon) {
+            Some(child) => {
+                println!("Un nouveau bébé est né !");
+                child.show();
+                self.pokemons.push(child);
+            }
+            None => {}
         }
     }
 }
 
 fn main() {
-    println!("Hello, world!");
+    let mut breeding = Breeding::new();
+
+    let pikachu = Pokemon::new("Pikachu", PokemonType::Electrik, Gender::Male);
+    let salameche = Pokemon::new("Salamèche", PokemonType::Feu, Gender::Femelle);
+    let bulbizarre = Pokemon::new("Bulbizarre", PokemonType::Plante, Gender::Male);
+    let feunard = Pokemon::new("Feunard", PokemonType::Feu, Gender::Male);
+    let galifeu = Pokemon::new("Galifeu", PokemonType::Feu, Gender::Femelle);
+
+    breeding.add_pokemon(pikachu);
+    breeding.add_pokemon(salameche);
+    breeding.add_pokemon(bulbizarre);
+    breeding.add_pokemon(feunard);
+    breeding.add_pokemon(galifeu);
+
+    breeding.show_all();
+    breeding.train_pokemons(1125);
+    breeding.show_all();
+
+    let feunard_ref = breeding.pokemons[3].clone();
+    let galifeu_ref = breeding.pokemons[4].clone();
+    breeding.try_reproduce(&feunard_ref, &galifeu_ref);
+    breeding.show_all();
 }
